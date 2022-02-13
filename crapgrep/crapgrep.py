@@ -2,6 +2,27 @@ import exceptions
 import re
 import os
 import sys
+import sty
+
+# TODO Avoid extra fname argument??
+def find_lines(lines: list, pattern: str, fname: str, is_regexp=False) -> list:
+    """
+    Distinguish between regexp or not (default is False)
+    """
+    found_lines = []
+
+    for l in lines:
+        if is_regexp:
+            matches = re.findall(pattern, l)
+            FIND_COND = len(matches) > 0
+        else:
+            FIND_COND = l.find(pattern) != -1
+
+        if FIND_COND:
+            l = l.strip()
+            found_lines.append(fname + l)
+
+    return found_lines
 
 def print_usage():
     usage = """
@@ -120,20 +141,12 @@ def process_grep(args_tree: dict) -> list:
                 pattern = pattern.lower()
             # Check if regexp flag
             if 'E' in options:
+                # pattern is regexp
                 if not check_pattern(pattern):
                     raise exceptions.InvalidPattern(pattern)
-                # Match regexp
-                # This isn't DRY... decorator?
-                for l in lines:
-                    matches = re.findall(pattern, l)
-                    if len(matches) > 0:
-                        l = l.strip()
-                        found_lines.append(f + l)
+                found_lines.extend(find_lines(lines, pattern, f, True))
             else:
-                for l in lines:
-                    if l.find(pattern) != -1:
-                        l = l.strip()
-                        found_lines.append(f + l)
+                found_lines.extend(find_lines(lines, pattern, f))
 
     except FileNotFoundError as e:
         print(e)
