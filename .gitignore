@@ -1,0 +1,7 @@
+*.swp
+test_f*.txt
+bin
+lib*
+*.cfg
+share
+*cache*
