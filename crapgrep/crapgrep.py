@@ -4,6 +4,7 @@ import os
 import sys
 import sty
 
+
 # TODO Avoid extra fname argument??
 def find_lines(lines: list, pattern: str, fname: str, is_regexp=False) -> list:
     """
@@ -11,30 +12,31 @@ def find_lines(lines: list, pattern: str, fname: str, is_regexp=False) -> list:
     """
     found_lines = []
 
-    for l in lines:
+    for line in lines:
         if is_regexp:
-            matches = re.findall(pattern, l)
+            matches = re.findall(pattern, line)
             FIND_COND = len(matches) > 0
         else:
-            FIND_COND = l.find(pattern) != -1
+            FIND_COND = line.find(pattern) != -1
 
         if FIND_COND:
-            l = l.strip()
-            found_lines.append(fname + l)
+            line = line.strip()
+            found_lines.append(fname + line)
 
     return found_lines
 
+
 def print_usage():
     usage = """
-Usage: pygrep.py [OPTIONS]... PATTERN [FILE]...
+Usage: crapgrep.py [OPTIONS]... PATTERN [FILE]...
 
 Example:
 
-    pygrep.py -i 'searching' target1.txt target2.txt
+    crapgrep.py -i 'searching' target1.txt target2.txt
 
 OPTIONS:
 
-    -E : PATTERN is an extended regexp
+    -E : PATTERN is a (Python) regexp
     -i : case-insensitive search for PATTERN
     -n : print line numbers
     -r : search recursively in files in the given path
@@ -43,13 +45,15 @@ OPTIONS:
     """
     print(usage)
 
+
 def check_args(args: list) -> bool:
     """
-    The arguments passed to pygrep.py
+    The arguments passed to crapgrep.py
     """
     if len(args) < 2 or args[0] == '--help':
         return False
     return True
+
 
 def check_pattern(pattern: str) -> bool:
     """
@@ -58,8 +62,9 @@ def check_pattern(pattern: str) -> bool:
     try:
         re.compile(pattern)
         return True
-    except:
+    except re.error:
         return False
+
 
 def parse_args(args: list) -> dict:
     """
@@ -67,10 +72,10 @@ def parse_args(args: list) -> dict:
     """
     # TODO move to class
     OPTS = [
-        'i', # Case-insensitive search
-        'E', # Pattern is a full regexp
-        'r', # Search recursively in dir
-        'n', # Print line numbers
+        'i',  # Case-insensitive search
+        'E',  # Pattern is a full regexp
+        'r',  # Search recursively in dir
+        'n',  # Print line numbers
     ]
     # TODO Handle extended options? (e.g. --ignore-case)
     LONG_OPTS = [
@@ -81,7 +86,6 @@ def parse_args(args: list) -> dict:
     ]
 
     args_tree = dict()
-    
     options = []
     # Get options
     for arg in args:
@@ -98,7 +102,7 @@ def parse_args(args: list) -> dict:
     remaining_args = [a for a in args if a.lstrip('-') not in options]
 
     pattern = remaining_args[0]
-    
+
     if pattern[0] == "'" and pattern[-1] == "'":
         pattern = pattern.strip("'")
     elif pattern[0] == '"' and pattern[-1] == '"':
@@ -113,6 +117,7 @@ def parse_args(args: list) -> dict:
     """
     return args_tree
 
+
 def match_regexp(pattern: str, line: str) -> object:
     """
     Search for pattern in the given line and return
@@ -121,6 +126,7 @@ def match_regexp(pattern: str, line: str) -> object:
     Flags??
     """
     return re.search(pattern, line)
+
 
 def process_grep(args_tree: dict) -> list:
     lines = []
@@ -132,7 +138,7 @@ def process_grep(args_tree: dict) -> list:
     try:
         for f in files:
             with open(f, 'r') as fp:
-                    lines = fp.readlines()
+                lines = fp.readlines()
 
             f = f + ':' if len(files) > 1 else ''
 
@@ -154,8 +160,9 @@ def process_grep(args_tree: dict) -> list:
 
     return found_lines
 
-# The main program...
-def __main__():
+
+# When the script is executed directly...
+if __name__ == "__main__":
     args = sys.argv[1:]
 
     if not check_args(args):
@@ -170,10 +177,8 @@ def __main__():
         sys.exit(1)
 
     try:
-        for l in process_grep(args_tree):
-            print(l)
+        for line in process_grep(args_tree):
+            print(line)
     except exceptions.InvalidPattern as e:
         print(e.get_message())
         sys.exit(1)
-
-__main__()
