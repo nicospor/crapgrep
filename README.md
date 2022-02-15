@@ -17,6 +17,21 @@ python crapgrep.py [OPTIONS] [PATTERN] [FILE[...]]
 
 _**Note**: obviously, `crapgrep` doesn't read from `stdin`, which makes it even more useless..._
 
+## Installation
+
+If you like wasting time because apparently you have nothing better to do, you can try `crapgrep` by cloning the repository with `git`:
+
+```bash
+git clone https://baltig.cnr.it//nicolo.paraciani//crapgrep.git
+```
+
+then
+
+```bash
+cd crapgrep
+python crapgrep.py <option> <file(s)>
+```
+
 ## Examples
 
 The examples below assume that `python` is an alias of `python3`.
@@ -75,12 +90,18 @@ meaning that the matches were found in lines `5` and `73` of `garbage1.txt` and 
 
 Ehm...
 
-## Why
+## Why?!
 
-If you're asking yourself: "_Why would you inflict something like this upon the world?_", the answer is... because it's fun!
+If you're asking yourself: 
+
+> _Why would you inflict something like this upon the world?_
+
+the answer is... _because it's fun!_
 
 ## TODO
 
 - [ ] Implement the recursive search option (`-r`)
 - [ ] Implement long options (e.g.,`--ignore-case`)
+- [ ] Add colors to terminal output with `sty`
+- [ ] Add a few tests
 - [ ] Abandon the project!!

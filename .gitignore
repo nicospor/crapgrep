@@ -1,5 +1,11 @@
+# Vim stuff
 *.swp
+*.vim
+
+# Test files
 test_f*.txt
+
+# venv
 bin
 lib*
 *.cfg
