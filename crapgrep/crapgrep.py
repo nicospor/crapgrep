@@ -6,24 +6,24 @@ import sty
 
 
 # TODO Avoid extra fname argument??
-def find_lines(lines: list, pattern: str, fname: str, is_regexp=False) -> list:
+def find_line(line: str, pattern: str, is_regexp=False) -> bool:
     """
     Distinguish between regexp or not (default is False)
     """
-    found_lines = []
 
-    for line in lines:
-        if is_regexp:
-            matches = re.findall(pattern, line)
-            FIND_COND = len(matches) > 0
-        else:
-            FIND_COND = line.find(pattern) != -1
+    found = False
 
-        if FIND_COND:
-            line = line.strip()
-            found_lines.append(fname + line)
+    if is_regexp:
+        matches = re.findall(pattern, line)
+        FIND_COND = len(matches) > 0
+    else:
+        FIND_COND = line.find(pattern) != -1
 
-    return found_lines
+    if FIND_COND:
+        line = line.strip()
+        found = True
+
+    return found
 
 
 def print_usage():
@@ -86,15 +86,14 @@ def parse_args(args: list) -> dict:
     ]
 
     args_tree = dict()
-    options = []
-    # Get options
-    for arg in args:
-        # Parse short options
-        if arg[0] == '-':
-            if arg[1:] not in OPTS:
-                raise exceptions.InvalidOption(arg[1:])
+    # Filter short options
+    options = [arg[1:] for arg in args if arg[0] == '-']
 
-            options.append(arg[1:])
+    # Remove invalid options and throw exception
+    # TODO does it make sense?
+    for opt in options:
+        if opt not in OPTS:
+            raise exceptions.InvalidOption(opt[1:])
 
     args_tree["options"] = options
 
@@ -111,10 +110,6 @@ def parse_args(args: list) -> dict:
     args_tree["pattern"] = rf"{pattern}"
     args_tree["files"] = remaining_args[1:]
 
-    """
-    print(args_tree)
-    sys.exit(1)
-    """
     return args_tree
 
 
@@ -142,17 +137,26 @@ def process_grep(args_tree: dict) -> list:
 
             f = f + ':' if len(files) > 1 else ''
 
+            n = 0
+
             # Check if case insensitive
             if 'i' in options:
                 pattern = pattern.lower()
-            # Check if regexp flag
-            if 'E' in options:
-                # pattern is regexp
-                if not check_pattern(pattern):
-                    raise exceptions.InvalidPattern(pattern)
-                found_lines.extend(find_lines(lines, pattern, f, True))
-            else:
-                found_lines.extend(find_lines(lines, pattern, f))
+            for line in lines:
+                n = n + 1
+                # Check if regexp flag
+                if 'E' in options:
+                    # pattern is regexp
+                    if not check_pattern(pattern):
+                        raise exceptions.InvalidPattern(pattern)
+                    found = find_line(line, pattern, True)
+                else:
+                    found = find_line(line, pattern)
+
+                lnum = str(n) + ':' if 'n' in options else ''
+
+                if found:
+                    found_lines.append(f + lnum + line.strip())
 
     except FileNotFoundError as e:
         print(e)
