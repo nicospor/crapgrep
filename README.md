@@ -22,7 +22,7 @@ _**Note**: obviously, `crapgrep` doesn't read from `stdin`, which makes it even 
 If you like wasting time because apparently you have nothing better to do, you can try `crapgrep` by cloning the repository with `git`:
 
 ```bash
-git clone https://baltig.cnr.it//nicolo.paraciani//crapgrep.git
+git clone https://baltig.cnr.it/nicolo.paraciani/crapgrep.git
 ```
 
 then
@@ -96,7 +96,9 @@ If you're asking yourself:
 
 > _Why would you inflict something like this upon the world?_
 
-the answer is... _because it's fun!_
+the answer is... 
+
+> _because it's fun!_
 
 ## TODO
 
