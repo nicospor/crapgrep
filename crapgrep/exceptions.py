@@ -1,4 +1,4 @@
-class InvalidOption(Exception):
+class InvalidOptionError(Exception):
     def __init__(self, invalid_opt):
         self.invalid_opt = invalid_opt
 
@@ -6,7 +6,7 @@ class InvalidOption(Exception):
         return f"crapgrep: invalid option -- '{self.invalid_opt}'"
 
 
-class InvalidPattern(Exception):
+class InvalidPatternError(Exception):
     def __init__(self, pattern):
         self.invalid = pattern
 

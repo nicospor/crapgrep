@@ -6,20 +6,21 @@ Then this is for you...
 
 ## What is this?
 
-`crapgrep` is a poor imitation of the Unix utility `grep` written in Python.  
+`crapgrep` is a poor imitation of the Unix utility `grep`, written in Python.
+
 More specifically, it's a command line tool to search for a pattern or a substring in each line of one or more text files.
 
-The command synopsis is very similar to `grep`, although it needs the Python interpreter to be invoked explicitly (at the moment, at least):
+The command synopsis is very similar to `grep`'s, although it needs the Python interpreter to be invoked explicitly (at the moment, at least):
 
 ```
-python crapgrep.py [OPTIONS] [PATTERN] [FILE[...]]
+python crapgrep.py [OPTION...] [PATTERN] [FILE...]
 ```
 
-_**Note**: obviously, `crapgrep` doesn't read from `stdin`, which makes it even more useless..._
+> _**Note**: obviously, `crapgrep` doesn't read from `stdin`, which makes it even more useless..._
 
 ## Installation
 
-If you like wasting time because apparently you have nothing better to do, you can try `crapgrep` by cloning the repository with `git`:
+If you like wasting time (because apparently you have nothing better to do), you can try `crapgrep` by cloning the repository with `git`:
 
 ```bash
 git clone https://baltig.cnr.it/nicolo.paraciani/crapgrep.git
@@ -28,8 +29,8 @@ git clone https://baltig.cnr.it/nicolo.paraciani/crapgrep.git
 then
 
 ```bash
-cd crapgrep
-python crapgrep.py <option> <file(s)>
+cd crapgrep/crapgrep
+python crapgrep.py <options> <files>
 ```
 
 ## Examples
@@ -44,15 +45,15 @@ Searching for the simple string `'hola'` in file `garbage.txt` in the current di
 python crapgrep.py hola garbage.txt
 ```
 
-To make the search case-insensitive, you could do:
+To make the search case-insensitive:
 
 ```
-python crapgrep.py -i hOlA garbage.txt
+python crapgrep.py -i hola garbage.txt
 ```
 
 ### Regexp
 
-_**Note**: unlike `grep`, `crapgrep` doesn't treat the string as a regular expression pattern by default, it must be specified by passing the `-E` option explicitly._ 
+_**Note**: unlike `grep`, `crapgrep` doesn't treat the pattern as a regular expression by default, it must be specified by passing the `-E` option explicitly._ 
 
 Searching for pattern `'^urka[0-9]'` in files `garbage1.txt` and `garbage2.txt` in the parent directory:
 

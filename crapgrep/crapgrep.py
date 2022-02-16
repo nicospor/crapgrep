@@ -2,11 +2,9 @@ import exceptions
 import re
 import os
 import sys
-import sty
 
 
-# TODO Avoid extra fname argument??
-def find_line(line: str, pattern: str, is_regexp=False) -> bool:
+def find_line(line: str, pattern: str, i_case: bool, is_regexp=False) -> bool:
     """
     Distinguish between regexp or not (default is False)
     """
@@ -16,6 +14,9 @@ def find_line(line: str, pattern: str, is_regexp=False) -> bool:
     if is_regexp:
         matches = re.findall(pattern, line)
         FIND_COND = len(matches) > 0
+    elif i_case:
+        lower = line.lower()
+        FIND_COND = lower.find(pattern.lower()) != -1
     else:
         FIND_COND = line.find(pattern) != -1
 
@@ -93,7 +94,7 @@ def parse_args(args: list) -> dict:
     # TODO does it make sense?
     for opt in options:
         if opt not in OPTS:
-            raise exceptions.InvalidOption(opt[1:])
+            raise exceptions.InvalidOptionError(opt)
 
     args_tree["options"] = options
 
@@ -113,22 +114,13 @@ def parse_args(args: list) -> dict:
     return args_tree
 
 
-def match_regexp(pattern: str, line: str) -> object:
-    """
-    Search for pattern in the given line and return
-    a match object or None if no match found.
-
-    Flags??
-    """
-    return re.search(pattern, line)
-
-
 def process_grep(args_tree: dict) -> list:
     lines = []
     found_lines = []
     options = args_tree["options"]
     pattern = args_tree["pattern"]
     files = args_tree["files"]
+    i_case = False
 
     try:
         for f in files:
@@ -139,19 +131,19 @@ def process_grep(args_tree: dict) -> list:
 
             n = 0
 
-            # Check if case insensitive
-            if 'i' in options:
-                pattern = pattern.lower()
             for line in lines:
                 n = n + 1
+                # Check if case insensitive
+                if 'i' in options:
+                    i_case = True
                 # Check if regexp flag
                 if 'E' in options:
                     # pattern is regexp
                     if not check_pattern(pattern):
-                        raise exceptions.InvalidPattern(pattern)
-                    found = find_line(line, pattern, True)
+                        raise exceptions.InvalidPatternError(pattern)
+                    found = find_line(line, pattern, i_case, True)
                 else:
-                    found = find_line(line, pattern)
+                    found = find_line(line, pattern, i_case)
 
                 lnum = str(n) + ':' if 'n' in options else ''
 
@@ -175,7 +167,7 @@ if __name__ == "__main__":
 
     try:
         args_tree = parse_args(args)
-    except exceptions.InvalidOption as e:
+    except exceptions.InvalidOptionError as e:
         print(e.get_message())
         print_usage()
         sys.exit(1)
@@ -183,6 +175,6 @@ if __name__ == "__main__":
     try:
         for line in process_grep(args_tree):
             print(line)
-    except exceptions.InvalidPattern as e:
+    except exceptions.InvalidPatternError as e:
         print(e.get_message())
         sys.exit(1)
