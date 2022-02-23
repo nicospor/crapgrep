@@ -6,17 +6,18 @@ import sys
 
 def find_line(line: str, pattern: str, i_case: bool, is_regexp=False) -> bool:
     """
-    Distinguish between regexp or not (default is False)
+    Check if line contains matches for pattern, with case and regexp flags.
+    Returns True if pattern is found in line.
     """
-
     found = False
+
+    if i_case:
+        line = line.lower()
+        pattern = pattern.lower()
 
     if is_regexp:
         matches = re.findall(pattern, line)
         FIND_COND = len(matches) > 0
-    elif i_case:
-        lower = line.lower()
-        FIND_COND = lower.find(pattern.lower()) != -1
     else:
         FIND_COND = line.find(pattern) != -1
 
@@ -72,12 +73,12 @@ def parse_args(args: list) -> dict:
     Parse cli arguments and return the tree as a dict
     """
     # TODO move to class
-    OPTS = [
+    OPTS = (
         'i',  # Case-insensitive search
         'E',  # Pattern is a full regexp
         'r',  # Search recursively in dir
         'n',  # Print line numbers
-    ]
+    )
     # TODO Handle extended options? (e.g. --ignore-case)
     LONG_OPTS = [
         '--ignore-case',
