@@ -158,8 +158,7 @@ def process_grep(args_tree: dict) -> list:
     return found_lines
 
 
-# When the script is executed directly...
-if __name__ == "__main__":
+def main():
     args = sys.argv[1:]
 
     if not check_args(args):
@@ -179,3 +178,8 @@ if __name__ == "__main__":
     except exceptions.InvalidPatternError as e:
         print(e.get_message())
         sys.exit(1)
+
+
+# When the script is executed directly...
+if __name__ == "__main__":
+    main()
