@@ -179,6 +179,8 @@ def main():
         print(e.get_message())
         sys.exit(1)
 
+    sys.exit(0)
+
 
 # When the script is executed directly...
 if __name__ == "__main__":
